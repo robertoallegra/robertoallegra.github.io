@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Paroliamo</title>
+        <link rel="stylesheet" type="text/css" href="index.css">
+        <script src="words.js"></script>
+        <script src="paroliamo.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> 
+    </head>
+    <body onload="startGame()">
+        <div class="titolo">PAROLIAMO</div>
+        <div id="timer"></div>
+
+        <div id="letters"></div>
+        <div id="definition">
+        </div>
+        <div id="solutionLetters"></div>
+        <div id="solution">
+            <button onclick="onPrev()"> < </button>
+            <div id="solutionCount"></div>
+            <button onclick="onNext()"> > </button>        
+        </div>
+        <div class="buttons">
+            <button ontouchend="drawVowel()" class="drawButton vowelButton">Pesca<br>Vocale</button>
+            <button ontouchend="drawConsonant()" class="drawButton consonantButton">Pesca Consonante</button>
+        </div>
+        <button id="restart" onclick="startGame()">Ricomincia</button>
+    </body>
+</html>
