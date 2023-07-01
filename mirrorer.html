@@ -1,0 +1,166 @@
+<html>
+
+<head>
+    <script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
+    <style>
+        .key {
+            border: 1px solid gray;
+            border-radius: 2px;
+            position: absolute;
+            cursor: pointer;
+        }
+
+        .white-key {
+            background: white;
+            width: 20px;
+            height: 100px;
+        }
+
+        .black-key {
+            background: black;
+            width: 10px;
+            height: 65px;
+        }
+
+        .pressed {
+            background: #5670d7;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <label>Output:</label>
+            <select>
+                <option v-for="item in outputs">{{item[0]}}</option>
+            </select>
+
+            <label>Input:</label>
+            <select>
+                <option v-for="item in inputs">{{item[0]}}</option>
+            </select>
+        </div>
+        <div style="height: 150px;">
+            <div v-for="item in whitekeys" class="white-key key" :class="{ pressed: item.pressed}"
+                v-bind:style="'left:' + item.x + 'px'" v-on:mousedown="mousedown(item, true)"
+                v-on:mouseup="mouseup(item, true)" v-on:mouseleave="mouseup(item, true)"></div>
+            <div v-for="item in blackkeys" class="black-key key" :class="{ pressed: item.pressed}"
+                v-bind:style="'left:' + item.x + 'px'" v-on:mousedown="mousedown(item, true)"
+                v-on:mouseup="mouseup(item, true)" v-on:mouseleave="mouseup(item, true)"></div>
+        </div>
+
+        <div>
+            <button onclick="play()">Play</button>
+        </div>
+    </div>
+    <script>
+
+
+        function play() {
+            let firstMessage = state.recorded[0];
+
+            for (let message of state.recorded) {
+                output.send([message.message == 'on' ? 0x90 : 0x80, message.item.note, 60], window.performance.now() + (message.time - firstMessage.time));
+            }
+        }
+
+        function recordNote(item, message) {
+            state.recorded.push({
+                item: item,
+                message: message,
+                time: window.performance.now()
+            });
+        }
+
+        function mousedown(item, send) {
+            if (item && !item.pressed) {
+                item.pressed = true;
+                if (send) output.send([0x90, item.note, 80]);
+                recordNote(item, 'on');
+            }
+        }
+
+        function mouseup(item, send) {
+            if (item && item.pressed) {
+                item.pressed = false;
+                if (send) output.send([0x80, item.note, 80]);
+                recordNote(item, 'off');
+            }
+        }
+
+        let midiAccess = null;
+        let mirrorNote = 68;
+        let input = null;
+        let output = null;
+
+        let state = {
+            outputs: [],
+            inputs: [],
+            whitekeys: [...new Array(7 * 7)].map((x, i) => ({ note: 0, i: i, color: 'w', pressed: false, x: 20 * i })),
+            blackkeys: [...new Array(7 * 7)].map((x, i) => ({ note: 0, i: i, color: 'b', pressed: false, x: 20 * i + 15 })).filter(x => ![2, 6].includes(x.i % 7)),
+            allkeys: [],
+            mousedown: mousedown,
+            mouseup: mouseup,
+            recorded: []
+        };
+
+        state.allkeys = [...state.whitekeys, ...state.blackkeys].sort((a, b) => a.x - b.x);
+
+        state.allkeys.forEach((item, i) => item.note = 24 + i);
+
+        var app = new Vue(
+            {
+                el: '#app',
+                data: state
+            });
+
+
+
+        async function startMidi2() {
+            try {
+            navigator.requestMIDIAccess().then(r => {
+
+                if (!midiAccess) {
+                    alert('ok');
+                } else {
+                    alert('ok2')
+                }
+                state.outputs = [...midiAccess.outputs];
+                state.inputs = [...midiAccess.inputs];
+                output = state.outputs[0][1];
+                input = state.inputs[0][1];
+
+                input.onmidimessage = (event) => {
+                    if (event.data[0] == 0x90) {
+                        mousedown(state.allkeys.find(x => x.note == event.data[1], false));
+                    } else if (event.data[0] == 0x80) {
+                        mouseup(state.allkeys.find(x => x.note == event.data[1], false));
+                    }
+                };
+
+
+            }).catch(x => alert('nope'));
+        } catch(e) {
+            alert(e)
+        }
+        }
+
+        async function startMidi() {
+            midiAccess = await navigator.requestMIDIAccess();
+            let outputs = midiAccess.outputs.values();
+            let inputs = midiAccess.inputs.values();
+
+            input.onmidimessage = (event) => {
+                if ((event.data[0] == 0x90 || event.data[0] == 0x80)) { //&& event.data[1] > 68 ) {
+                    output.send([event.data[0], 2 * mirrorNote - event.data[1], event.data[2]]);
+                } else {
+                    output.send(event.data);
+                }
+            };
+        }
+        startMidi2();
+    </script>
+</body>
+
+</html>
