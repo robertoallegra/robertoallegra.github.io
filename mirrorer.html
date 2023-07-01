@@ -118,20 +118,25 @@
 
 
         async function startMidi2() {
-            midiAccess = await navigator.requestMIDIAccess();
+            try {
+                midiAccess = await navigator.requestMIDIAccess();
 
-            state.outputs = [...midiAccess.outputs];
-            state.inputs = [...midiAccess.inputs];
-            output = state.outputs[0][1];
-            input = state.inputs[0][1];
+                state.outputs = [...midiAccess.outputs];
+                state.inputs = [...midiAccess.inputs];
+                output = state.outputs[0][1];
+                input = state.inputs[0][1];
 
-            input.onmidimessage = (event) => {
-                if (event.data[0] == 0x90) {
-                    mousedown(state.allkeys.find(x => x.note == event.data[1], false));
-                } else if (event.data[0] == 0x80) {
-                    mouseup(state.allkeys.find(x => x.note == event.data[1], false));
-                }
-            };
+                input.onmidimessage = (event) => {
+                    if (event.data[0] == 0x90) {
+                        mousedown(state.allkeys.find(x => x.note == event.data[1], false));
+                    } else if (event.data[0] == 0x80) {
+                        mouseup(state.allkeys.find(x => x.note == event.data[1], false));
+                    }
+                };
+
+            } catch (e) {
+                alert(e);
+            }
         }
 
         async function startMidi() {
