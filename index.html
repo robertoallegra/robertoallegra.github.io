@@ -1,0 +1,225 @@
+<html>
+
+<head>
+  <style>
+    body {
+      background: #ccc;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .container {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 1px solid black;
+      padding: 50px;
+      background: #333;
+      margin: 20px;
+    }
+
+    circle {
+      cursor: pointer;
+    }
+
+    .top-bar {
+      color: white;
+      display: flex;
+      padding: 10px;
+      margin: 0;
+      background-color: #333;
+      gap: 10px;
+    }
+    
+    .history-container .header {
+      background: #333;
+      color: white;
+      padding: 10px;
+    }
+
+    .history-container .history div {
+      padding: 10px;
+    }
+
+    .history-container .history div:nth-child(even) {
+      background-color: #aaa;
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <div class="top-bar">
+    <div>Rows:
+      <select id="rows" value="5">
+        <option>3</option>
+        <option>4</option>
+        <option selected>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+      </select>
+    </div>
+    <div>
+      <button onclick="restart()">Restart</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <svg viewbox="0 0 100 100">
+    </svg>
+  </div>
+
+  <div class="history-container">
+    <div class="header">
+      Move list
+    </div>
+    <div class="history">
+  
+    </div>
+  </div>
+  
+
+
+  <script>
+    let svg = document.querySelector('svg')
+
+    function createBoard(rowCount, columnCount) {
+      let board = {
+        rowCount: rowCount,
+        columnCount: columnCount,
+        pieces: {},
+        history: []
+      }
+
+      for (let r = 0; r < rowCount; ++r) {
+        for (let c = 0; c < columnCount; ++c) {
+          if (c <= r) {
+            board.pieces[r + ',' + c] = {
+              row: r,
+              column: c,
+              isPresent: 1
+            };
+          }
+        }
+      }
+
+      getPiece(board, 0, 0).isPresent = 0;
+
+      return board;
+    }
+
+    function createBoardView(svg, board) {
+      svg.innerHTML = '';
+
+      let radius = 10;
+      let gap = 5;
+
+      let margin = 20;
+
+      let fullWidth = board.columnCount * (2 * radius + gap) + margin;
+      let fullHeight = board.rowCount * (2 * radius + gap) + margin;
+
+      svg.setAttribute('viewBox', "0 0 " + fullWidth + " " + fullHeight);
+
+      for (let piece of Object.values(board.pieces)) {
+        let r = piece.row;
+        let c = piece.column;
+
+        let el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        el.setAttribute('cx', margin / 2 + (board.columnCount / 2 + c - r / 2) * (radius * 2 + gap));
+        el.setAttribute('cy', margin / 2 + r * (radius * 2 + gap));
+        el.setAttribute('r', radius);
+        el.setAttribute('row', r);
+        el.setAttribute('column', c);
+
+        el.addEventListener('click', onClickedCircle);
+        svg.appendChild(el);
+        piece.element = el;
+      }
+
+      let elHistory = document.querySelector('.history');
+      elHistory.innerHTML = "";
+
+      refreshBoardView(svg, board);
+    }
+
+    function refreshBoardView(svg, board) {
+      for (let piece of Object.values(board.pieces)) {
+        let el = piece.element;
+
+        el.setAttribute('fill', board.selectedPiece == piece ? '#e60000' : piece.isPresent ? '#eecc00' : '#666');
+        el.setAttribute('stroke', board.selectedPiece == piece ? 'black' : 'transparent');
+      }
+
+      let row = 0;
+      let elHistory = document.querySelector('.history');
+      
+      for (let move of board.history) {
+        if (++row > elHistory.childElementCount) {
+          elHistory.innerHTML += '<div>' + move[0] + " to " + move[1] + '</div>';
+        }
+      }
+    }
+
+    function getPiece(board, row, column) {
+      return board.pieces[row + ',' + column];
+    }
+
+    function onClickedCircle(e) {
+      let row = e.target.getAttribute('row');
+      let column = e.target.getAttribute('column');
+      let piece = getPiece(board, row, column);
+      let selectedPiece = board.selectedPiece;
+
+      if (!piece) {
+        return;
+      }
+
+      if (piece.isPresent) {
+        selectPiece(board, row, column);
+      } else {
+        let rowDiff = Math.abs(piece.row - selectedPiece.row);
+        let columnDiff = Math.abs(piece.column - selectedPiece.column);
+
+        let capturedPiece = null;
+
+
+        if ((rowDiff == 2 && columnDiff == 0) || (rowDiff == 2 && columnDiff == 2) || (rowDiff == 0 && columnDiff == 2)) {
+          capturedPiece = getPiece(board, (piece.row + selectedPiece.row) / 2, (piece.column + selectedPiece.column) / 2);
+
+          if (capturedPiece && capturedPiece.isPresent) {
+            capturedPiece.isPresent = false;
+            selectedPiece.isPresent = false;
+            piece.isPresent = true;
+            board.selectedPiece = piece;
+
+            board.history.push([[selectedPiece.row, selectedPiece.column], [capturedPiece.row, capturedPiece.column]]);
+          }
+        }
+      }
+
+
+
+      refreshBoardView(svg, board);
+    }
+
+    function selectPiece(board, row, column) {
+      board.selectedPiece = getPiece(board, row, column);
+    }
+
+    function restart() {
+      let rows = document.querySelector('#rows').value || 5;
+      board = createBoard(rows, rows);
+
+      createBoardView(svg, board);
+    }
+
+    restart();
+
+  </script>
+</body>
+
+</html>

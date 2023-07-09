@@ -3,11 +3,16 @@
 <head>
     <script src="https://unpkg.com/vue@2.6.10/dist/vue.js"></script>
     <style>
+        .keyboard {
+            position: relative;
+            height: 150px;
+        }
         .key {
             border: 1px solid gray;
             border-radius: 2px;
             position: absolute;
             cursor: pointer;
+            top: 0px;
         }
 
         .white-key {
@@ -25,6 +30,10 @@
         .pressed {
             background: #5670d7;
         }
+
+        .hover {
+            background: #ea7c29;
+        }
     </style>
 </head>
 
@@ -41,13 +50,15 @@
                 <option v-for="item in inputs">{{item[0]}}</option>
             </select>
         </div>
-        <div style="height: 150px;">
-            <div v-for="item in whitekeys" class="white-key key" :class="{ pressed: item.pressed}"
+        <div class="keyboard">
+            <div v-for="item in whitekeys" class="white-key key" :class="{ pressed: item.pressed, hover: item.ishover}"
                 v-bind:style="'left:' + item.x + 'px'" v-on:mousedown="mousedown(item, true)"
-                v-on:mouseup="mouseup(item, true)" v-on:mouseleave="mouseup(item, true)"></div>
-            <div v-for="item in blackkeys" class="black-key key" :class="{ pressed: item.pressed}"
+                v-on:mouseup="mouseup(item, true)" v-on:mouseleave="mouseup(item, true)"
+                v-on:mouseenter="mouseover(item, true)"></div>>
+            <div v-for="item in blackkeys" class="black-key key" :class="{ pressed: item.pressed, hover: item.ishover}"
                 v-bind:style="'left:' + item.x + 'px'" v-on:mousedown="mousedown(item, true)"
-                v-on:mouseup="mouseup(item, true)" v-on:mouseleave="mouseup(item, true)"></div>
+                v-on:mouseup="mouseup(item, true)" v-on:mouseleave="mouseup(item, true)"
+                v-on:mouseenter="mouseover(item, true)"></div>
         </div>
 
         <div>
@@ -73,20 +84,31 @@
             });
         }
 
-        function mousedown(item, send) {
+        function mousedown(item, send, volume) {
             if (item && !item.pressed) {
                 item.pressed = true;
-                if (send) output.send([0x90, item.note, 80]);
+                if (send) output.send([0x90, item.note, volume || 80]);
                 recordNote(item, 'on');
             }
         }
 
-        function mouseup(item, send) {
+        function mouseup(item, send, volume) {
             if (item && item.pressed) {
                 item.pressed = false;
-                if (send) output.send([0x80, item.note, 80]);
+                if (send) output.send([0x80, item.note, volume || 80]);
                 recordNote(item, 'off');
             }
+            let oppositeKey = state.allkeys[2*mirrorNote-24-item.note];
+            
+            if (oppositeKey)
+                oppositeKey.ishover = false;
+        }
+
+        function mouseover(item, send) {
+            let oppositeKey = state.allkeys[2*mirrorNote-24-item.note];
+            
+            if (oppositeKey)
+                oppositeKey.ishover = true;
         }
 
         let midiAccess = null;
@@ -97,11 +119,12 @@
         let state = {
             outputs: [],
             inputs: [],
-            whitekeys: [...new Array(7 * 7)].map((x, i) => ({ note: 0, i: i, color: 'w', pressed: false, x: 20 * i })),
-            blackkeys: [...new Array(7 * 7)].map((x, i) => ({ note: 0, i: i, color: 'b', pressed: false, x: 20 * i + 15 })).filter(x => ![2, 6].includes(x.i % 7)),
+            whitekeys: [...new Array(7 * 7)].map((x, i) => ({ note: 0, i: i, color: 'w', pressed: false, x: 20 * i, ishover: false })),
+            blackkeys: [...new Array(7 * 7)].map((x, i) => ({ note: 0, i: i, color: 'b', pressed: false, x: 20 * i + 15, ishover: false })).filter(x => ![2, 6].includes(x.i % 7)),
             allkeys: [],
             mousedown: mousedown,
             mouseup: mouseup,
+            mouseover: mouseover,
             recorded: []
         };
 
@@ -128,14 +151,24 @@
 
                 input.onmidimessage = (event) => {
                     if (event.data[0] == 0x90) {
-                        mousedown(state.allkeys.find(x => x.note == event.data[1], false));
+                        mousedown(state.allkeys.find(x => x.note == getOppositeNote(event.data[1])), true, event.data[2]);
                     } else if (event.data[0] == 0x80) {
-                        mouseup(state.allkeys.find(x => x.note == event.data[1], false));
+                        mouseup(state.allkeys.find(x => x.note == getOppositeNote(event.data[1])), true, event.data[2]);
+                    } else {
+                        output.send(event.data)
                     }
                 };
 
             } catch (e) {
                 alert(e);
+            }
+        }
+
+        function getOppositeNote(note) {
+            if (note > mirrorNote) {
+                return note;
+            } else {
+                return 2 * mirrorNote - note;
             }
         }
 
@@ -146,7 +179,7 @@
 
             input.onmidimessage = (event) => {
                 if ((event.data[0] == 0x90 || event.data[0] == 0x80)) { //&& event.data[1] > 68 ) {
-                    output.send([event.data[0], 2 * mirrorNote - event.data[1], event.data[2]]);
+                    output.send([event.data[0], getOppositeNote(event.data[1]), event.data[2]]);
                 } else {
                     output.send(event.data);
                 }
