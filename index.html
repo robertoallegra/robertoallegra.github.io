@@ -64,6 +64,7 @@
     </div>
     <div>
       <button onclick="restart()">Restart</button>
+      <button onclick="solveAll()">Solve</button>
     </div>
   </div>
 
@@ -71,6 +72,7 @@
     <svg viewbox="0 0 100 100">
     </svg>
   </div>
+
 
   <div class="history-container">
     <div class="header">
@@ -81,17 +83,20 @@
     </div>
   </div>
   
+  
 
 
   <script>
-    let svg = document.querySelector('svg')
+    let svg = document.querySelector('svg');
+    
 
     function createBoard(rowCount, columnCount) {
       let board = {
         rowCount: rowCount,
         columnCount: columnCount,
         pieces: {},
-        history: []
+        history: [],
+        historyIndex: 0
       }
 
       for (let r = 0; r < rowCount; ++r) {
@@ -106,7 +111,7 @@
         }
       }
 
-      getPiece(board, 0, 0).isPresent = 0;
+      getPiece(board, 1, 0).isPresent = 0;
 
       return board;
     }
@@ -159,9 +164,23 @@
       
       for (let move of board.history) {
         if (++row > elHistory.childElementCount) {
-          elHistory.innerHTML += '<div>' + move[0] + " to " + move[1] + '</div>';
+          elHistory.innerHTML += `<div onclick="goToHistory(${row-1})">${move[0][0].row + ',' + move[0][0].column} to ${move[0][2].row + ',' + move[0][2].column}</div>`;
         }
       }
+    }
+
+    function goToHistory(index) {
+      let move = board.history[index][0];
+      let state = board.history[index][1];
+
+      applyState(board, state);
+      board.selectedPiece = move[0];
+      refreshBoardView(svg, board);
+
+      setTimeout(() => {
+        executeMove(board, move, false)
+        refreshBoardView(svg, board);
+      }, 150);
     }
 
     function getPiece(board, row, column) {
@@ -191,18 +210,27 @@
           capturedPiece = getPiece(board, (piece.row + selectedPiece.row) / 2, (piece.column + selectedPiece.column) / 2);
 
           if (capturedPiece && capturedPiece.isPresent) {
-            capturedPiece.isPresent = false;
-            selectedPiece.isPresent = false;
-            piece.isPresent = true;
-            board.selectedPiece = piece;
-
-            board.history.push([[selectedPiece.row, selectedPiece.column], [capturedPiece.row, capturedPiece.column]]);
+            executeMove(board, [selectedPiece, capturedPiece, piece], true);
           }
         }
       }
 
+      refreshBoardView(svg, board);
+    }
 
+    function executeMove(board, move, addToHistory) {
+      let [selectedPiece, capturedPiece, piece] = move;
 
+      let state = getState(board);
+
+      capturedPiece.isPresent = 0;
+      selectedPiece.isPresent = 0;
+      piece.isPresent = 1;
+      board.selectedPiece = piece;
+
+      if (addToHistory) {
+        board.history.push([move, state]);
+      }
       refreshBoardView(svg, board);
     }
 
@@ -218,6 +246,129 @@
     }
 
     restart();
+
+
+    function getState(board) {
+      return Object.values(board.pieces).map(x => x.isPresent).join('');
+    }
+
+    function hasWon(board, state) {
+      if (!state) {
+        state = getState(board);
+      }
+
+      return (state.filter(x => x).length == 1);
+    }
+
+    function applyState(board, state) {
+      let i=0;
+      for(key in board.pieces) {
+        board.pieces[key].isPresent = +state[i++];
+      } 
+    }
+
+    function solveAll() {
+      let state = getState(board);
+
+      let path = solve(board, board.history.map(x => x[0]));
+
+      applyState(board, state);
+
+      executeSolution(path, 0);
+    }
+
+    function executeSolution(path, i) {
+      if (i < path.length) {
+        executeMove(board, path[i], true);
+        setTimeout(() => {executeSolution(path, i+1)}, 250);
+      }
+    }
+
+    function solve(board_, path) {
+      if (!board_) {
+        board_ = board;
+      }
+
+      let state = getState(board_);
+
+      if (path.length == state.length-2) {
+        return path;
+      }
+
+     
+      let moves = enumerateMoves(board_);
+
+      for (let move of moves) {
+        let board = applyState(board_, state);
+ 
+        doMove(board, move);
+
+        let solution = solve(board, [...path, move]);
+
+        if (solution) {
+          return solution;
+        }
+      }
+
+      return null;
+    }
+
+    const directions = [
+      [0,-1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 0],
+      [-1, -1]
+    ];
+
+    function enumerateMoves(board) {
+      let result = [];
+
+      let pieces = Object.values(board.pieces);
+      
+      for (let endPiece of pieces) {
+        if (endPiece.isPresent == 0) {
+          for (let direction of directions) {
+            let position = [endPiece.row + direction[0], endPiece.column + direction[1]];
+            let key = position.join(',');
+            let middlePiece = board.pieces[key];
+            if (middlePiece?.isPresent) {
+              position = [middlePiece.row + direction[0], middlePiece.column + direction[1]];
+              key = position.join(',');
+              let startPiece = board.pieces[key];
+
+              if (startPiece?.isPresent) {
+                result.push([startPiece, middlePiece, endPiece])
+              }
+            }
+          }
+        }
+      }
+
+      return shuffle(result);
+    }
+
+    function shuffle(arr) {
+      var newArr = [];
+
+      while (arr.length) {
+
+        var randomIndex = Math.floor(Math.random() * arr.length),
+            element = arr.splice(randomIndex, 1)
+
+        newArr.push(element[0]);       
+
+      }
+
+      return newArr;
+    }
+
+    function doMove(board, move) {
+      move[0].isPresent = 0;
+      move[1].isPresent = 0;
+      move[2].isPresent = 1; 
+    }
 
   </script>
 </body>
