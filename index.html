@@ -64,7 +64,8 @@
     </div>
     <div>
       <button onclick="restart()">Restart</button>
-      <button onclick="solveAll()">Solve</button>
+      <button onclick="solveAll(false)">Deterministic Solve</button>
+      <button onclick="solveAll(true)">Randomized Solve</button>
     </div>
   </div>
 
@@ -267,14 +268,21 @@
       } 
     }
 
-    function solveAll() {
-      isSeen = {};
-      
+    let skips = 0;
+    let isRandom = false;
+
+    function solveAll(_isRandom) {
+      isRandom = _isRandom;
+      isSeen = new Set();
+      skips = 0;
+
       let state = getState(board);
 
       let path = solve(board, board.history.map(x => x[0]));
 
       applyState(board, state);
+
+      console.log(isSeen.size + " analyzed" + ". " + skips + " nodes pruned!");
 
       executeSolution(path, 0);
     }
@@ -293,11 +301,12 @@
 
       let state = getState(board_);
 
-      if (isSeen[state]) {
+      if (isSeen.has(state)) {
+        ++skips;
         return null;
       }
 
-      isSeen[state] = true;
+      isSeen.add(state);
 
       if (path.length == state.length-2) {
         return path;
@@ -354,7 +363,7 @@
         }
       }
 
-      return shuffle(result);
+      return isRandom ? shuffle(result) : result;
     }
 
     function shuffle(arr) {
