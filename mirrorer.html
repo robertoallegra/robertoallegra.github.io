@@ -165,7 +165,7 @@
         }
 
         function getOppositeNote(note) {
-            if (note > mirrorNote) {
+            if (note < mirrorNote) {
                 return note;
             } else {
                 return 2 * mirrorNote - note;

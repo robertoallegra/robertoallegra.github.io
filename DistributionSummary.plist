@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Bennati.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>armv7</string>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+				<key>dateExpires</key>
+				<string>03/09/2024</string>
+				<key>type</key>
+				<string>Apple Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>ISO8601DateFormatterValueTransformer.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>MBProgressHUD.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>RKValueTransformers.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>RestKit.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>SDWebImage.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>SOCKit.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A535AA8DED6E75C2B3188BCC83D9D4280B13FBC6</string>
+						<key>dateExpires</key>
+						<string>03/09/2024</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>TransitionKit.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>WRA63WP58Z</string>
+						<key>name</key>
+						<string>BENNATI SRL SB</string>
+					</dict>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>WRA63WP58Z.com.bennati.bennati.23</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>WRA63WP58Z</string>
+				<key>get-task-allow</key>
+				<false/>
+				<key>keychain-access-groups</key>
+				<array>
+					<string>WRA63WP58Z.com.bennati.bennati.23</string>
+				</array>
+			</dict>
+			<key>name</key>
+			<string>Bennati.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>ac194cfc-b897-41a2-86a2-9f15fd047681</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.bennati.bennati.23</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>WRA63WP58Z</string>
+				<key>name</key>
+				<string>BENNATI SRL SB</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
