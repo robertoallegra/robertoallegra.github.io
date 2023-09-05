@@ -200,14 +200,14 @@
 			<key>entitlements</key>
 			<dict>
 				<key>application-identifier</key>
-				<string>WRA63WP58Z.com.bennati.bennati.23</string>
+				<string>WRA63WP58Z.com.bennati.bennati.2023</string>
 				<key>com.apple.developer.team-identifier</key>
 				<string>WRA63WP58Z</string>
 				<key>get-task-allow</key>
 				<false/>
 				<key>keychain-access-groups</key>
 				<array>
-					<string>WRA63WP58Z.com.bennati.bennati.23</string>
+					<string>WRA63WP58Z.com.bennati.bennati.2023</string>
 				</array>
 			</dict>
 			<key>name</key>
@@ -215,9 +215,9 @@
 			<key>profile</key>
 			<dict>
 				<key>UUID</key>
-				<string>ac194cfc-b897-41a2-86a2-9f15fd047681</string>
+				<string>789719d0-b90d-4148-a410-48712fcd846c</string>
 				<key>name</key>
-				<string>iOS Team Ad Hoc Provisioning Profile: com.bennati.bennati.23</string>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.bennati.bennati.2023</string>
 			</dict>
 			<key>team</key>
 			<dict>

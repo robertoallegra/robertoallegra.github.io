@@ -9,11 +9,11 @@
 	<key>manifest</key>
 	<dict>
 		<key>appURL</key>
-		<string>https://robertoallegra.github.io/bennati.ipa</string>
+		<string>https://robertoallegra.github.io/Bennati.ipa</string>
 		<key>displayImageURL</key>
-		<string>https//robertoallegra.github.io/icon75.png</string>
+		<string>https://robertoallegra.github.io/icon57.png</string>
 		<key>fullSizeImageURL</key>
-		<string>https//robertoallegra.github.io/icon512.png</string>
+		<string>https://robertoallegra.github.io/icon512.png</string>
 	</dict>
 	<key>method</key>
 	<string>ad-hoc</string>

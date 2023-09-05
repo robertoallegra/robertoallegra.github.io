@@ -11,13 +11,13 @@
 					<key>kind</key>
 					<string>software-package</string>
 					<key>url</key>
-					<string>https://robertoallegra.github.io/bennati.ipa</string>
+					<string>https://robertoallegra.github.io/Bennati.ipa</string>
 				</dict>
 				<dict>
 					<key>kind</key>
 					<string>display-image</string>
 					<key>url</key>
-					<string>https://robertoallegra.github.io/icon75.png</string>
+					<string>https://robertoallegra.github.io/icon57.png</string>
 				</dict>
 				<dict>
 					<key>kind</key>
@@ -29,9 +29,9 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.bennati.bennati.23</string>
+				<string>com.bennati.bennati.2023</string>
 				<key>bundle-version</key>
-				<string>4</string>
+				<string>5</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>platform-identifier</key>
